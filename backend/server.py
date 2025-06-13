@@ -1,3 +1,4 @@
+from collections import defaultdict
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import simpy
@@ -138,7 +139,7 @@ def visualize_route():
             all_path.append(tuple(point))
 
     path_len = len(all_path)
-    direction_grid = {}
+    direction_grid = defaultdict(list)
     for i, point in enumerate(all_path):
         if (i + 1) < path_len:
             next_point = all_path[i + 1]
@@ -150,8 +151,7 @@ def visualize_route():
             elif next_point[1] - point[1] > 0:
                 direction = "right"
             print(point, next_point)
-            direction_grid[f"{point[0]},{point[1]}"] = direction
-
+            direction_grid[f"{point[0]},{point[1]}"].append(direction)
 
     # Mark path points (but don't overwrite shelves)
     for i, point in enumerate(all_path_points):

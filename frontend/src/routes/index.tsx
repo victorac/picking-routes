@@ -42,6 +42,9 @@ function App() {
       .join(', ')
     if (content.length === 0) {
       content = directions[`${y},${x}`]
+      if (content && content?.length > 1) {
+        content = content.join(', ')
+      }
     }
     return content
   }
@@ -83,10 +86,7 @@ function App() {
                     )
                   : ''}
               </span>
-              <span className='text-white'>
-
-              {displayContent(x,y)}
-              </span>
+              <span className="text-white">{displayContent(x, y)}</span>
             </div>
           )
         })}
