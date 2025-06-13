@@ -71,7 +71,7 @@ A warehouse picking route optimization system that uses the Traveling Salesman P
 2. **Run with Docker Compose (Development)**
 
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
 
 3. **Access the application**
