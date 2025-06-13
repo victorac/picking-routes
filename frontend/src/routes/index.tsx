@@ -6,13 +6,22 @@ export const Route = createFileRoute('/')({
   component: App,
 })
 
+const directionMap = {
+  up: '↑',
+  down: '↓',
+  left: '←',
+  right: '→',
+}
+
 function App() {
   const [layout, setLayout] = useState<Array<Array<number>>>([])
   const [shelves, setShelves] = useState<Record<string, Array<number>>>({})
   const [pickList, setPickList] = useState('')
   const [path, setPath] = useState<Array<Array<number>>>([])
   const [routePoints, setRoutePoints] = useState<Array<Record<string, any>>>([])
-  const [directions, setDirections] = useState<Record<string, string>>({})
+  const [directions, setDirections] = useState<
+    Record<string, Array<string> | undefined>
+  >({})
 
   useEffect(() => {
     axios.get('http://localhost:5000/api/layout').then((res) => {
@@ -29,7 +38,7 @@ function App() {
     setLayout(res.data.visual_grid)
     setRoutePoints(res.data.route_points)
     setDirections(res.data.directions)
-    // setPath(res.data.path)
+    setPath(res.data.path)
   }
   function displayContent(x: number, y: number) {
     let content = routePoints
@@ -41,9 +50,9 @@ function App() {
       .filter(Boolean)
       .join(', ')
     if (content.length === 0) {
-      content = directions[`${y},${x}`]
-      if (content && content?.length > 1) {
-        content = content.join(', ')
+      const direction = directions[`${y},${x}`]
+      if (direction && direction.length > 0) {
+        content = direction.map((val) => <span>{directionMap[val]}</span>)
       }
     }
     return content
@@ -57,7 +66,19 @@ function App() {
           const isShelf = Object.values(shelves).some(
             ([sy, sx]) => sx === x && sy === y,
           )
-          const isPath = path.some(([px, py]) => px === x && py === y)
+          const isPath = path.some(([py, px]) => px === x && py === y)
+          let bgColor = "#fff"
+          let textColor = "#1c1b1f"
+          if (cell >= 3){
+            bgColor = "#0b5"
+          } else if (isPath) {
+            bgColor = '#005'
+            textColor = '#fff'
+          } else if (cell === 1){
+            bgColor = "#999"
+          } else if (isShelf){
+            bgColor = '#f80'
+          }
           return (
             <div
               className="flex items-center justify-center text-xs relative"
@@ -66,17 +87,8 @@ function App() {
                 width: cellSize,
                 height: cellSize,
                 border: '1px solid #ccc',
-                backgroundColor: isPath
-                  ? 'limegreen'
-                  : cell === 1
-                    ? '#999'
-                    : cell === -1
-                      ? '#005'
-                      : cell === 2
-                        ? '#f60'
-                        : cell >= 3
-                          ? '#0b5'
-                          : '#fff',
+                backgroundColor:bgColor,
+                color: textColor
               }}
             >
               <span className="absolute top-0 left-0">

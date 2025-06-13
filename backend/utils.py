@@ -7,7 +7,7 @@ layout = [[0 for _ in range(20)] for _ in range(10)]
 
 starting_point = [9, 10]
 
-for j in range(3, 17):
+for j in range(2, 18):
     layout[1][j] = 1  # Horizontal wall/aisle
     layout[3][j] = 1  # Another horizontal wall/aisle
     layout[5][j] = 1  # Another horizontal wall/aisle
@@ -22,13 +22,12 @@ for i in range(10):
 
 # # Add some openings in the walls
 layout[7][10] = 0
-layout[7][9] = 0
 layout[3][10] = 0
-layout[3][9] = 0
+
 
 # Sample shelf locations - adjusted to be in walkable areas
 shelves = {
-    "sp": starting_point,
+    "start": starting_point,
     "A1": [0, 1],
     "A2": [1, 1],
     "A3": [2, 1],

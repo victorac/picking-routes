@@ -2,6 +2,8 @@
 
 A warehouse picking route optimization system that uses the Traveling Salesman Problem (TSP) with A\* pathfinding to find the most efficient picking routes while respecting warehouse layout constraints.
 
+![Example](example.png)
+
 ## 🚀 Features
 
 - **Layout-Aware TSP Optimization**: Routes consider actual warehouse obstacles (walls, aisles, blocked areas)

@@ -48,7 +48,7 @@ def api_solve_with_paths():
     """Enhanced solve endpoint that returns both optimal order and actual paths"""
     data = request.get_json()
     pick_list = data.get("pick_list", [])
-    pick_list = ["sp"] + pick_list
+    pick_list = ["start"] + pick_list
 
     locations = [shelves[sku] for sku in pick_list if sku in shelves]
     if not locations:
@@ -97,7 +97,7 @@ def visualize_route():
     """Create a visualization-friendly representation of the route"""
     data = request.get_json()
     pick_list = data.get("pick_list", [])
-    pick_list = ["sp"] + pick_list
+    pick_list = ["start"] + pick_list
 
     if not pick_list:
         return jsonify({"error": "Empty pick list"}), 400
@@ -160,6 +160,7 @@ def visualize_route():
 
     return jsonify(
         {
+            "path":all_path,
             "visual_grid": visual_grid,
             "route_points": route_points,
             "directions": direction_grid,
