@@ -64,7 +64,7 @@ A warehouse picking route optimization system that uses the Traveling Salesman P
 1. **Clone the repository**
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/victorac/picking-routes.git
    cd picking
    ```
 
