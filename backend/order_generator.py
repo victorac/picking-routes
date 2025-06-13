@@ -61,12 +61,12 @@ class OrderGenerator:
         
         for hour in range(hours):
             # Vary order intensity throughout the day (more orders during business hours)
-            time_multiplier = self._get_time_multiplier(hour)
+            orders_time = start_time + timedelta(hours=hour)
+            time_multiplier = self._get_time_multiplier(orders_time.hour)
             adjusted_mean = orders_per_hour_mean * time_multiplier
             
             # Generate number of orders for this hour (normal distribution)
             orders_this_hour = max(0, int(np.random.normal(adjusted_mean, orders_per_hour_std)))
-            
             for order_num in range(orders_this_hour):
                 # Distribute orders randomly within the hour
                 minutes_offset = random.randint(0, 59)
@@ -121,7 +121,7 @@ class OrderGenerator:
 # Usage example and testing functions
 def test_order_generator():
     """Test the order generator with sample data"""
-    from server import shelves  # Import shelves from your main server
+    from utils import shelves  # Import shelves from your main server
     
     generator = OrderGenerator(shelves)
     
@@ -139,8 +139,7 @@ def test_order_generator():
     
     # Generate time-based orders
     print("\n=== Time-based Orders (24 hours) ===")
-    time_orders = generator.generate_time_based_orders(hours=8, orders_per_hour_mean=3)
-    
+    time_orders = generator.generate_time_based_orders(hours=24, orders_per_hour_mean=3)
     for order in time_orders[:10]:  # Show first 10
         print(f"{order['timestamp'][:19]} - {order['order_id']}: {order['pick_list']}")
     

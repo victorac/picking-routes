@@ -11,6 +11,8 @@ function App() {
   const [shelves, setShelves] = useState<Record<string, Array<number>>>({})
   const [pickList, setPickList] = useState('')
   const [path, setPath] = useState<Array<Array<number>>>([])
+  const [routePoints, setRoutePoints] = useState<Array<Record<string, any>>>([])
+  const [directions, setDirections] = useState<Record<string, string>>({})
 
   useEffect(() => {
     axios.get('http://localhost:5000/api/layout').then((res) => {
@@ -21,23 +23,41 @@ function App() {
 
   const handleSolve = async () => {
     const skus = pickList.split(/\s|,/).filter(Boolean)
-    const res = await axios.post('http://localhost:5000/api/solve', {
+    const res = await axios.post('http://localhost:5000/api/visualize-route', {
       pick_list: skus,
     })
-    setPath(res.data.path)
+    setLayout(res.data.visual_grid)
+    setRoutePoints(res.data.route_points)
+    setDirections(res.data.directions)
+    // setPath(res.data.path)
+  }
+  function displayContent(x: number, y: number) {
+    let content = routePoints
+      .map((point) =>
+        point.position[0] === y && point.position[1] === x
+          ? '' + point.order
+          : '',
+      )
+      .filter(Boolean)
+      .join(', ')
+    if (content.length === 0) {
+      content = directions[`${y},${x}`]
+    }
+    return content
   }
 
   const renderGrid = () => {
-    const cellSize = 25
+    const cellSize = 50
     return layout.map((row, y) => (
       <div key={y} style={{ display: 'flex' }}>
         {row.map((cell, x) => {
           const isShelf = Object.values(shelves).some(
-            ([sx, sy]) => sx === x && sy === y,
+            ([sy, sx]) => sx === x && sy === y,
           )
           const isPath = path.some(([px, py]) => px === x && py === y)
           return (
             <div
+              className="flex items-center justify-center text-xs relative"
               key={x}
               style={{
                 width: cellSize,
@@ -45,13 +65,29 @@ function App() {
                 border: '1px solid #ccc',
                 backgroundColor: isPath
                   ? 'limegreen'
-                  : isShelf
-                    ? 'orange'
-                    : cell === 1
-                      ? '#999'
-                      : '#fff',
+                  : cell === 1
+                    ? '#999'
+                    : cell === -1
+                      ? '#005'
+                      : cell === 2
+                        ? '#f60'
+                        : cell >= 3
+                          ? '#0b5'
+                          : '#fff',
               }}
-            />
+            >
+              <span className="absolute top-0 left-0">
+                {isShelf
+                  ? Object.keys(shelves).filter(
+                      (key) => shelves[key][0] === y && shelves[key][1] === x,
+                    )
+                  : ''}
+              </span>
+              <span className='text-white'>
+
+              {displayContent(x,y)}
+              </span>
+            </div>
           )
         })}
       </div>
